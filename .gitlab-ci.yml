@@ -1,0 +1,46 @@
+stages:
+  - deploy
+
+variables:
+  POSTGRES_DB: $DB_NAME
+  POSTGRES_USER: $DB_USER
+  POSTGRES_PASSWORD: $DB_PASSWORD
+  SECRET_KEY: $SECRET_KEY
+
+services:
+  - name: postgres:13
+    alias: db
+
+before_script:
+  - apt-get update && apt-get install -y python3-dev libpq-dev
+  - pip install -r requirements.txt
+  - python manage.py migrate
+
+.prepare_ssh_private_key:
+  before_script:
+    - echo "[CI] Instalando dependencias e configurando ssh agent"
+    - apt update && apt install openssh-client sshpass -y > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval $(ssh-agent -s) > /dev/null
+    - ssh-add ~/.ssh/id_rsa > /dev/null
+
+deploy:
+  stage: deploy
+  image: ubuntu:22.04
+  only:
+    - main
+  when: manual
+  extends: .prepare_ssh_private_key
+  script:
+    - echo "[CI] Entrando na maquina e fazendo deploy..."
+    - ssh -o "StrictHostKeyChecking=no" ${SSH_USER}@${SERVER_IP} "
+        cd dataroom_virtual;
+        git pull origin main;
+        docker-compose up --build -d;
+        echo \"y\" | docker system prune -a;
+      "
+  after_script:
+    - echo "[CI] Finalizando..."
