@@ -1,0 +1,65 @@
+{% extends 'dataroom/base_generic.html' %}
+{% block title %}File Detail{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">{{ file.display_name }}</h2>
+            <p class="card-text">{{ file.description }}</p>
+            <p class="text-muted">Uploaded on: {{ file.upload_time }}</p>
+            <a href="{% url 'download_file' file.pk %}" class="btn btn-primary" download>Download {{ file.display_name }}</a>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Upload Consideration</h3>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group d-flex align-items-center mt-4">
+                <label class="btn btn-primary btn-file mb-0">
+                    Escolher Arquivo <input type="file" name="consideration_file" style="display: none;">
+                </label>
+                <button type="submit" class="btn btn-success ml-3">Upload Consideration</button>
+            </div>
+            <div class="invalid-feedback d-block">
+                {{ form.consideration_file.errors }}
+                {{ form.file.errors }}
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-4">
+        <h3>Considerations</h3>
+        <ul class="list-group">
+            {% for consideration in considerations %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ consideration.user.username }} uploaded on {{ consideration.upload_time }}
+                    <a href="{% url 'download_file' consideration.pk %}" class="btn btn-secondary btn-sm btn-download" download>Download</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No approved considerations found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="mt-4">
+        <h3>Pending Considerations</h3>
+        <ul class="list-group">
+            {% for consideration in file.considerations.all %}
+                {% if not consideration.is_approved %}
+                    <li class="list-group-item">
+                        {{ consideration.user.username }} uploaded on {{ consideration.upload_time }} - Awaiting validation
+                    </li>
+                {% endif %}
+            {% empty %}
+                <li class="list-group-item">No pending considerations found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
