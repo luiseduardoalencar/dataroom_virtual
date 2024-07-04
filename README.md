@@ -23,9 +23,21 @@ Este projeto é uma aplicação Django para um DataRoom virtual, que permite upl
    Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis de ambiente:
 
    ```env
+
+
+   #settings.py
+   SECRET_KEY = YOUR_SECRET_KEY
+   
+   DB_NAME=dataroom_db
+   DB_USER=dataroom_user
+   DB_PASSWORD=YOUR_PASSWORD
+   DB_HOST=db
+   DB_PORT=5432
+   
+   #docker-compose
    POSTGRES_DB=dataroom_db
    POSTGRES_USER=dataroom_user
-   POSTGRES_PASSWORD=YOUR_PASSSWORD
+   POSTGRES_PASSWORD=YOUR_PASSWORD
    ```
 
 3. **Construir e iniciar os contêineres:**
