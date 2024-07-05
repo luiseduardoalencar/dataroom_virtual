@@ -13,6 +13,7 @@ urlpatterns = [
     path('upload/', views.upload_file, name='upload_file'),
     path('file/<int:pk>/', views.file_detail, name='file_detail'),
     path('download/<int:pk>/', views.download_file, name='download_file'),
+    path('download/consideration/<int:pk>/', views.download_consideration, name='download_consideration'),  # Adicionada esta linha
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

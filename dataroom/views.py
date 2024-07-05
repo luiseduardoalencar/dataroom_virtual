@@ -76,7 +76,7 @@ def file_detail(request, pk):
         if form.is_valid():
             try:
                 consideration_instance = form.save(commit=False)
-                consideration_instance.file = file  # Definindo o campo file diretamente no modelo
+                consideration_instance.file = file
                 consideration_instance.user = request.user
                 consideration_instance.is_approved = False  # Define como não aprovado por padrão
                 consideration_instance.save()
@@ -99,4 +99,11 @@ def download_file(request, pk):
     response = HttpResponse(file.file_data, content_type='application/octet-stream')
     response['Content-Disposition'] = f'attachment; filename="{file.filename}"'
     Log.objects.create(user=request.user, action='download', filename=file.filename)
+    return response
+
+@login_required
+def download_consideration(request, pk):
+    consideration = get_object_or_404(Consideration, pk=pk)
+    response = HttpResponse(consideration.consideration_data, content_type='application/octet-stream')
+    response['Content-Disposition'] = f'attachment; filename="{consideration.consideration_filename}"'
     return response

@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import User, File, Consideration, Log, Download
 from .forms import FileUploadForm, ConsiderationUploadForm
 
+def approve_considerations(modeladmin, request, queryset):
+    queryset.update(is_approved=True)
+approve_considerations.short_description = "Approve selected considerations"
+
+
 class FileAdmin(admin.ModelAdmin):
     form = FileUploadForm
     list_display = ('display_name', 'upload_time', 'description')
@@ -19,7 +24,7 @@ class ConsiderationAdmin(admin.ModelAdmin):
     list_filter = ('is_approved', 'upload_time')
     search_fields = ('consideration_filename',)
     fields = ('consideration_file', 'file', 'user', 'is_approved')
-
+    actions = [approve_considerations]
 
 
 admin.site.register(User)

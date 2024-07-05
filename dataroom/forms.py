@@ -81,7 +81,7 @@ class ConsiderationUploadForm(forms.ModelForm):
             consideration_instance.consideration_data = uploaded_file.read()
         else:
             raise forms.ValidationError("No file uploaded.")
-        consideration_instance.is_approved = False  # Define como não aprovado por padrão
+        consideration_instance.is_approved = False  # Definir como não aprovado por padrão
         if commit:
             consideration_instance.save()
         return consideration_instance
