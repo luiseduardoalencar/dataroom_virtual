@@ -10,10 +10,11 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('', views.index, name='index'),
+    path('classification/<int:pk>/', views.classification_detail, name='classification_detail'),
     path('upload/', views.upload_file, name='upload_file'),
     path('file/<int:pk>/', views.file_detail, name='file_detail'),
     path('download/<int:pk>/', views.download_file, name='download_file'),
-    path('download/consideration/<int:pk>/', views.download_consideration, name='download_consideration'),  # Adicionada esta linha
+    path('download/consideration/<int:pk>/', views.download_consideration, name='download_consideration'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

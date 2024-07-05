@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
+class Classification(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
@@ -38,9 +45,10 @@ class File(models.Model):
     filename = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    file_data = models.BinaryField(editable=False)  # Definir como não editável
+    file_data = models.BinaryField(editable=False)
     upload_time = models.DateTimeField(auto_now_add=True)
-
+    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, related_name='files', null=True, blank=True)
+    
 class Consideration(models.Model):
     file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='considerations')
     user = models.ForeignKey(User, on_delete=models.CASCADE)

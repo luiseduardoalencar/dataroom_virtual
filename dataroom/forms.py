@@ -4,22 +4,41 @@ from .models import File, Consideration, User
 from django.core.exceptions import ValidationError
 
 class RegisterForm(UserCreationForm):
-    representative_name = forms.CharField(max_length=255, required=True)
-    position = forms.CharField(max_length=255, required=True)
-
+    representative_name = forms.CharField(
+        max_length=255, 
+        required=True, 
+        label='Nome do Representante',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Representante'})
+    )
+    position = forms.CharField(
+        max_length=255, 
+        required=True, 
+        label='Cargo',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cargo'})
+    )
     class Meta:
         model = User
         fields = [
             'company_name', 'cnpj', 'social_reason', 'phone', 'email', 'address',
             'representative_name', 'position', 'password1', 'password2'
         ]
+        labels = {
+            'company_name': 'Nome da Empresa',
+            'cnpj': 'CNPJ',
+            'social_reason': 'Razão Social',
+            'phone': 'Telefone',
+            'email': 'Email',
+            'address': 'Endereço',
+            'password1': 'Senha',
+            'password2': 'Confirmação de Senha',
+        }
         widgets = {
-            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company name'}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Empresa'}),
             'cnpj': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '00000000000000'}),
-            'social_reason': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Social reason'}),
+            'social_reason': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Razão Social'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(00) 0000-0000'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
-            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Endereço'}),
             'representative_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Representative name'}),
             'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Position'}),
             'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
@@ -51,10 +70,11 @@ class FileUploadForm(forms.ModelForm):
 
     class Meta:
         model = File
-        fields = ['file', 'display_name', 'description']
+        fields = ['file', 'display_name', 'description', 'classification']
         widgets = {
             'display_name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'classification': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def save(self, commit=True):

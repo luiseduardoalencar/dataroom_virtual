@@ -1,0 +1,17 @@
+{% extends 'dataroom/base_generic.html' %}
+{% block title %}{{ classification.name }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3>{{ classification.name }}</h3>
+    <p>{{ classification.description }}</p>
+    <ul class="list-group">
+        {% for file in files %}
+            <li class="list-group-item">
+                <a href="{% url 'file_detail' file.pk %}">{{ file.display_name }}</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Nenhuma Classificação foi criada</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

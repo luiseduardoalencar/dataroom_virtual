@@ -1,23 +1,22 @@
 {% extends 'dataroom/base_generic.html' %}
 {% block title %}Data Room{% endblock %}
 {% block content %}
-<div class = "mt-4">
-<h2>Data Room Investe Piauí</h2>
+<div class="mt-4">
+    <h2>Data Room Investe Piauí</h2>
 </div>
 {% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}!</p>
+    <p>Seja Bem vindo(a), {{ user.username }}!</p>
 {% endif %}
-<ul class="list-group">
-    {% for file in files %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <a href="{% url 'file_detail' file.pk %}">{{ file.display_name }}</a>
-                <p>{{ file.description }}</p>
-            </div>
-            <a href="{% url 'download_file' file.pk %}" class="btn btn-primary btn-download" download>Download</a>
-        </li>
-    {% empty %}
-        <li class="list-group-item">No files found.</li>
-    {% endfor %}
-</ul>
+<div class="mt-4">
+    <h3>Diretórios</h3>
+    <ul class="list-group">
+        {% for classification in classifications %}
+            <li class="list-group-item">
+                <a href="{% url 'classification_detail' classification.pk %}">{{ classification.name }}</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Nada encontrado.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

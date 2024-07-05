@@ -6,13 +6,13 @@
         <div class="card-body">
             <h2 class="card-title">{{ file.display_name }}</h2>
             <p class="card-text">{{ file.description }}</p>
-            <p class="text-muted">Uploaded on: {{ file.upload_time }}</p>
+            <p class="text-muted">Upload feito em: {{ file.upload_time }}</p>
             <a href="{% url 'download_file' file.pk %}" class="btn btn-primary" download>Download {{ file.display_name }}</a>
         </div>
     </div>
 
     <div class="mt-4">
-        <h3>Upload Consideration</h3>
+        <h3>Considerações</h3>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
@@ -24,7 +24,7 @@
                 <label class="btn btn-primary btn-file mb-0">
                     Escolher Arquivo <input type="file" name="consideration_file" style="display: none;">
                 </label>
-                <button type="submit" class="btn btn-success ml-3">Upload Consideration</button>
+                <button type="submit" class="btn btn-success ml-3">Upload de Considerações</button>
             </div>
             <div class="invalid-feedback d-block">
                 {{ form.consideration_file.errors }}
@@ -34,31 +34,31 @@
     </div>
 
     <div class="mt-4">
-        <h3>Considerations</h3>
+        
         <ul class="list-group">
             {% for consideration in considerations %}
                 {% if consideration.is_approved %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ consideration.user.username }} uploaded on {{ consideration.upload_time }}
+                        {{ consideration.user.username }} upload feito em {{ consideration.upload_time }}
                         <a href="{% url 'download_consideration' consideration.pk %}" class="btn btn-secondary btn-sm btn-download" download>Download</a>
                     </li>
                 {% endif %}
             {% empty %}
-                <li class="list-group-item">No approved considerations found.</li>
+                <li class="list-group-item">Nenhuma consideração aprovada</li>
             {% endfor %}
         </ul>
     </div>
     <div class="mt-4">
-        <h3>Pending Considerations</h3>
+        <h3>Considerações Pendentes</h3>
         <ul class="list-group">
             {% for consideration in file.considerations.all %}
                 {% if not consideration.is_approved %}
                     <li class="list-group-item">
-                        {{ consideration.user.username }} uploaded on {{ consideration.upload_time }} - Awaiting validation
+                        {{ consideration.user.username }} upload feito em {{ consideration.upload_time }} - Awaiting validation
                     </li>
                 {% endif %}
             {% empty %}
-                <li class="list-group-item">No pending considerations found.</li>
+                <li class="list-group-item">No Considerações Pendentes found.</li>
             {% endfor %}
         </ul>
     </div>

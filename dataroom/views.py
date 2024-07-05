@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm, FileUploadForm, ConsiderationUploadForm
-from .models import File, Log, Consideration
+from .models import File, Log, Consideration, Classification
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -45,8 +45,14 @@ def logout(request):
 
 @login_required
 def index(request):
-    files = File.objects.all()
-    return render(request, 'dataroom/index.html', {'files': files})
+    classifications = Classification.objects.all()
+    return render(request, 'dataroom/index.html', {'classifications': classifications})
+
+@login_required
+def classification_detail(request, pk):
+    classification = get_object_or_404(Classification, pk=pk)
+    files = classification.files.all()
+    return render(request, 'dataroom/classification_detail.html', {'classification': classification, 'files': files})
 
 @login_required
 def upload_file(request):
