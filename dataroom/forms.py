@@ -16,11 +16,13 @@ class RegisterForm(UserCreationForm):
         label='Cargo',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cargo'})
     )
+    is_moderator = forms.BooleanField(required=False, label='Moderador')  # Novo campo
+
     class Meta:
         model = User
         fields = [
             'company_name', 'cnpj', 'social_reason', 'phone', 'email', 'address',
-            'representative_name', 'position', 'password1', 'password2'
+            'representative_name', 'position', 'is_moderator', 'password1', 'password2'  # Novo campo
         ]
         labels = {
             'company_name': 'Nome da Empresa',
@@ -43,6 +45,7 @@ class RegisterForm(UserCreationForm):
             'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Position'}),
             'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
             'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password confirmation'}),
+            'is_moderator': forms.CheckboxInput(attrs={'class': 'form-check-input'})  # Novo campo
         }
 
     def clean_cnpj(self):
@@ -57,9 +60,12 @@ class RegisterForm(UserCreationForm):
         user.username = user.email
         user.representative_name = self.cleaned_data['representative_name']
         user.position = self.cleaned_data['position']
+        user.is_moderator = self.cleaned_data.get('is_moderator', False)  # Novo campo
+        user.is_approved = False  
         if commit:
             user.save()
         return user
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -88,10 +94,11 @@ class FileUploadForm(forms.ModelForm):
 
 class ConsiderationUploadForm(forms.ModelForm):
     consideration_file = forms.FileField()
+    is_approved = forms.BooleanField(required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = Consideration
-        fields = ['consideration_file']
+        fields = ['consideration_file', 'is_approved']
 
     def save(self, commit=True):
         consideration_instance = super().save(commit=False)
@@ -105,3 +112,25 @@ class ConsiderationUploadForm(forms.ModelForm):
         if commit:
             consideration_instance.save()
         return consideration_instance
+
+class AdminUserCreationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ('email', 'is_admin', 'is_moderator', 'company_name', 'cnpj', 'social_reason', 'phone', 'address', 'representative_name', 'position')
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user

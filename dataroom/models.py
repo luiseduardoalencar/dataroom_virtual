@@ -12,6 +12,8 @@ class Classification(models.Model):
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
+    is_moderator = models.BooleanField(default=False) 
+    is_approved = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
     company_name = models.CharField(max_length=255, default="")
     cnpj = models.CharField(max_length=18, unique=True, default="")

@@ -27,9 +27,13 @@ def login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                auth_login(request, user)
-                messages.success(request, 'Login successful.')
-                return redirect('index')
+                if user.is_approved:
+                    auth_login(request, user)
+                    messages.success(request, 'Login successful.')
+                    return redirect('index')
+                else:
+                    messages.error(request, 'Your account is not approved yet.')
+                    return redirect('login')
             else:
                 messages.error(request, 'Invalid username or password.')
                 return redirect('login')
@@ -77,27 +81,43 @@ logger = logging.getLogger(__name__)
 def file_detail(request, pk):
     file = get_object_or_404(File, pk=pk)
     considerations = file.considerations.all()
+    
     if request.method == 'POST':
-        form = ConsiderationUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                consideration_instance = form.save(commit=False)
-                consideration_instance.file = file
-                consideration_instance.user = request.user
-                consideration_instance.is_approved = False  # Define como não aprovado por padrão
-                consideration_instance.save()
-                Log.objects.create(user=request.user, action='upload_consideration', filename=consideration_instance.consideration_filename)
-                messages.success(request, 'Consideration uploaded successfully. Awaiting approval.')
-                return HttpResponseRedirect(request.path_info)
-            except Exception as e:
-                logger.error(f'Error saving consideration: {e}')
-                messages.error(request, f'Error saving consideration: {e}')
+        if 'approve_consideration' in request.POST:
+            consideration_id = request.POST.get('consideration_id')
+            consideration = get_object_or_404(Consideration, pk=consideration_id)
+            consideration.is_approved = True
+            consideration.save()
+            messages.success(request, 'Consideration approved successfully.')
+            return redirect('file_detail', pk=pk)
         else:
-            logger.error(f'Form is not valid: {form.errors}')
-            messages.error(request, f'Form is not valid: {form.errors}')
+            form = ConsiderationUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                try:
+                    consideration_instance = form.save(commit=False)
+                    consideration_instance.file = file
+                    consideration_instance.user = request.user
+                    consideration_instance.is_approved = False  # Define como não aprovado por padrão
+                    consideration_instance.save()
+                    Log.objects.create(user=request.user, action='upload_consideration', filename=consideration_instance.consideration_filename)
+                    messages.success(request, 'Consideration uploaded successfully. Awaiting approval.')
+                    return HttpResponseRedirect(request.path_info)
+                except Exception as e:
+                    logger.error(f'Error saving consideration: {e}')
+                    messages.error(request, f'Error saving consideration: {e}')
+            else:
+                logger.error(f'Form is not valid: {form.errors}')
+                messages.error(request, f'Form is not valid: {form.errors}')
     else:
         form = ConsiderationUploadForm()
-    return render(request, 'dataroom/file_detail.html', {'file': file, 'considerations': considerations, 'form': form})
+    
+    context = {
+        'file': file,
+        'considerations': considerations,
+        'form': form,
+    }
+    
+    return render(request, 'dataroom/file_detail.html', context)
 
 @login_required
 def download_file(request, pk):

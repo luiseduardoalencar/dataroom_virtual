@@ -20,21 +20,14 @@
         {% endif %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group d-flex align-items-center mt-4">
-                <label class="btn btn-primary btn-file mb-0">
-                    Escolher Arquivo <input type="file" name="consideration_file" style="display: none;">
-                </label>
-                <button type="submit" class="btn btn-success ml-3">Upload de Considerações</button>
-            </div>
-            <div class="invalid-feedback d-block">
-                {{ form.consideration_file.errors }}
-                {{ form.file.errors }}
+            {{ form.as_p }}
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Upload de Considerações</button>
             </div>
         </form>
     </div>
 
     <div class="mt-4">
-        
         <ul class="list-group">
             {% for consideration in considerations %}
                 {% if consideration.is_approved %}
@@ -48,17 +41,27 @@
             {% endfor %}
         </ul>
     </div>
+    
     <div class="mt-4">
         <h3>Considerações Pendentes</h3>
         <ul class="list-group">
             {% for consideration in file.considerations.all %}
                 {% if not consideration.is_approved %}
                     <li class="list-group-item">
-                        {{ consideration.user.username }} upload feito em {{ consideration.upload_time }} - Awaiting validation
+                        {{ consideration.user.username }} upload feito em {{ consideration.upload_time }}
+                        {% if user.is_moderator %}
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="consideration_id" value="{{ consideration.id }}">
+                                <button type="submit" name="approve_consideration" class="btn btn-success btn-sm ml-3">Aprovar</button>
+                            </form>
+                        {% else %}
+                            - Awaiting validation
+                        {% endif %}
                     </li>
                 {% endif %}
             {% empty %}
-                <li class="list-group-item">No Considerações Pendentes found.</li>
+                <li class="list-group-item">Nenhuma consideração pendente</li>
             {% endfor %}
         </ul>
     </div>
