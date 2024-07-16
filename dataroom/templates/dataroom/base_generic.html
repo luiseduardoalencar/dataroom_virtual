@@ -2,11 +2,14 @@
 <html>
 <head>
     <title>{% block title %}Data Room Investe Piauí{% endblock %}</title>
-    
+    {% load static %}
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             padding-top: 56px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container {
             max-width: 960px;
@@ -60,11 +63,38 @@
             border-radius: 0.25rem;
             width: 100px; /* Ajuste a largura conforme necessário */
         }
+        footer {
+            margin-top: auto;
+            padding: 20px 0;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        footer img {
+            height: 60px; /* Ajuste a altura da imagem conforme necessário */
+            margin-left: 20px; /* Espaçamento entre as imagens */
+        }
+        footer .footer-text {
+            font-size: 14px;
+            color: #6c757d;
+            text-align: right;
+            max-width: 60%; /* Limite a largura do texto */
+        }
+        footer .footer-logos {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" >Data Room</a>
+        <a class="navbar-brand" href="https://investepiaui.com/">
+            <img src="{% static 'dataroom/assets/Investe_Piaui_03.png' %}" alt="Investe Piauí" style="height: 40px;">
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -77,6 +107,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Cadastro</a></li>
                 {% endif %}
+                <li class="nav-item"><a class="nav-link" href="https://investepiaui.com/fale-conosco/">Fale Conosco</a></li>
             </ul>
         </div>
     </nav>
@@ -94,6 +125,16 @@
         {% block content %}
         {% endblock %}
     </div>
+    <footer>
+        <div class="container">
+            <div class="footer-text">
+                <p>INVESTE/PI, com sede administrativa na cidade de Teresina (PI), na Av. João XXIII, 2715 – 1º andar, Bairro São Cristovão. CEP: 64049-010</p>
+            </div>
+            <div class="footer-logos">
+                <img src="{% static 'dataroom/assets/Investe_Gov_03.png' %}" alt="Governo do Piauí">
+            </div>
+        </div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
