@@ -51,8 +51,8 @@ class RegisterForm(UserCreationForm):
     def clean_cnpj(self):
         cnpj = self.cleaned_data.get('cnpj')
         cnpj = ''.join(filter(str.isdigit, cnpj))
-        if User.objects.filter(cnpj=cnpj).exists():
-            raise ValidationError('CNPJ já cadastrado')
+        #if User.objects.filter(cnpj=cnpj).exists():
+         #   raise ValidationError('CNPJ já cadastrado')
         return cnpj
 
     def save(self, commit=True):
@@ -86,6 +86,8 @@ class FileUploadForm(forms.ModelForm):
     def save(self, commit=True):
         file_instance = super().save(commit=False)
         uploaded_file = self.cleaned_data.get('file')
+        if uploaded_file.size > 157286400:  
+            raise forms.ValidationError("The file size exceeds the limit of 150 MB.")
         file_instance.filename = uploaded_file.name
         file_instance.file_data = uploaded_file.read()
         if commit:

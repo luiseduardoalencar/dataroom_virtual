@@ -21,6 +21,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      - DATA_UPLOAD_MAX_MEMORY_SIZE=157286400  
 
   pgadmin:
     image: dpage/pgadmin4

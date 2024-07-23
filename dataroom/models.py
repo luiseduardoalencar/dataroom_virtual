@@ -16,7 +16,7 @@ class User(AbstractUser):
     is_approved = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
     company_name = models.CharField(max_length=255, default="")
-    cnpj = models.CharField(max_length=18, unique=True, default="")
+    cnpj = models.CharField(max_length=18, unique=False, default="")
     social_reason = models.CharField(max_length=255, default="")
     phone = models.CharField(max_length=20, default="")
     address = models.CharField(max_length=255, default="")
@@ -47,7 +47,7 @@ class File(models.Model):
     filename = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    file_data = models.BinaryField(editable=False)
+    file_data = models.BinaryField(editable=False, max_length=157286400)
     upload_time = models.DateTimeField(auto_now_add=True)
     classification = models.ForeignKey(Classification, on_delete=models.CASCADE, related_name='files', null=True, blank=True)
     
